@@ -1,6 +1,4 @@
 const mongoose = require('mongoose')
-const dns = require('dns')
-dns.setServers(['8.8.8.8', '8.8.4.4'])
 
 if (process.argv.length < 3) {
   console.log('node mongo.js <password>')
@@ -11,7 +9,8 @@ const password = process.argv[2]
 const name = process.argv[3]
 const number = process.argv[4]
 
-const url = `mongodb+srv://wmal44884_db_user:${password}@cluster0.bk8rzmr.mongodb.net/phonebookApp?retryWrites=true&w=majority&appName=Cluster0`
+const mongoUser = process.env.MONGODB_USER || 'wmal44884_db_user'
+const url = `mongodb+srv://${mongoUser}:${password}@cluster0.bk8rzmr.mongodb.net/phonebookApp?retryWrites=true&w=majority&appName=Cluster0`
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
 
