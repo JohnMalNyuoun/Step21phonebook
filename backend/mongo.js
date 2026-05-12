@@ -1,17 +1,22 @@
 const mongoose = require('mongoose')
-const dns = require('dns')
-dns.setServers(['8.8.8.8', '8.8.4.4'])
 
-if (process.argv.length < 3) {
+const mongoUri = process.env.MONGODB_URI
+const mongoUser = process.env.MONGODB_USER
+
+if (!mongoUri && process.argv.length < 3) {
   console.log('node mongo.js <password>')
   process.exit(1)
 }
 
 const password = process.argv[2]
-const name = process.argv[3]
-const number = process.argv[4]
+const url = mongoUri || (mongoUser && password
+  ? `mongodb+srv://${encodeURIComponent(mongoUser)}:${encodeURIComponent(password)}@cluster0.bk8rzmr.mongodb.net/phonebookApp?retryWrites=true&w=majority&appName=Cluster0`
+  : null)
 
-const url = `mongodb+srv://wmal44884_db_user:${password}@cluster0.bk8rzmr.mongodb.net/phonebookApp?retryWrites=true&w=majority&appName=Cluster0`
+if (!url) {
+  console.log('Set MONGODB_URI, or set MONGODB_USER and pass password as first argument')
+  process.exit(1)
+}
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
 
@@ -22,7 +27,7 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 
-if (process.argv.length === 3) {
+if ((mongoUri && process.argv.length === 2) || (!mongoUri && process.argv.length === 3)) {
   // List all entries
   Person.find({}).then(persons => {
     console.log('phonebook:')
@@ -31,10 +36,10 @@ if (process.argv.length === 3) {
     })
     mongoose.connection.close()
   })
-} else if (process.argv.length === 5) {
+} else if ((mongoUri && process.argv.length === 4) || (!mongoUri && process.argv.length === 5)) {
   // Add a new entry
-  const name = process.argv[3]
-  const number = process.argv[4]
+  const name = process.argv[mongoUri ? 2 : 3]
+  const number = process.argv[mongoUri ? 3 : 4]
 
   const person = new Person({ name, number })
 
