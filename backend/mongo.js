@@ -8,11 +8,12 @@ if (process.argv.length < 3) {
 const password = process.argv[2]
 const name = process.argv[3]
 const number = process.argv[4]
+const encodedPassword = encodeURIComponent(password)
 
 const mongoUri = process.env.MONGODB_URI
 const mongoUser = process.env.MONGODB_USER
 const url = mongoUri || (mongoUser
-  ? `mongodb+srv://${mongoUser}:${password}@cluster0.bk8rzmr.mongodb.net/phonebookApp?retryWrites=true&w=majority&appName=Cluster0`
+  ? `mongodb+srv://${encodeURIComponent(mongoUser)}:${encodedPassword}@cluster0.bk8rzmr.mongodb.net/phonebookApp?retryWrites=true&w=majority&appName=Cluster0`
   : null)
 
 if (!url) {
