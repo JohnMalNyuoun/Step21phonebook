@@ -9,8 +9,16 @@ const password = process.argv[2]
 const name = process.argv[3]
 const number = process.argv[4]
 
-const mongoUser = process.env.MONGODB_USER || 'wmal44884_db_user'
-const url = `mongodb+srv://${mongoUser}:${password}@cluster0.bk8rzmr.mongodb.net/phonebookApp?retryWrites=true&w=majority&appName=Cluster0`
+const mongoUri = process.env.MONGODB_URI
+const mongoUser = process.env.MONGODB_USER
+const url = mongoUri || (mongoUser
+  ? `mongodb+srv://${mongoUser}:${password}@cluster0.bk8rzmr.mongodb.net/phonebookApp?retryWrites=true&w=majority&appName=Cluster0`
+  : null)
+
+if (!url) {
+  console.log('Set MONGODB_URI or MONGODB_USER before running this script')
+  process.exit(1)
+}
 mongoose.set('strictQuery', false)
 mongoose.connect(url)
 
