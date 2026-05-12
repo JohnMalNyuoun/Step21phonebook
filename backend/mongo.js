@@ -17,7 +17,7 @@ const url = mongoUri || (mongoUser
   : null)
 
 if (!url) {
-  console.log('Set MONGODB_URI or MONGODB_USER before running this script')
+  console.log('Set MONGODB_URI or set MONGODB_USER and pass password as first argument')
   process.exit(1)
 }
 mongoose.set('strictQuery', false)
